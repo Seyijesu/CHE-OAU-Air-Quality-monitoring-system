@@ -1,0 +1,294 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sensor Data</title>
+    <style>
+
+        * {
+            box-sizing: border-box;
+            padding: 0;
+            margin: 0;
+        }
+
+        body {
+            height: 100vh;
+            color: blue;
+        }
+        
+        th {
+            background-color: #f2f2f2;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 20px 0;
+        }
+
+        table, th, td {
+            border: 1px solid black;
+        }
+
+        th, td {
+            padding: 8px;
+            text-align: left;
+        }
+
+        .pagination {
+            margin-top: 20px;
+            text-align: center;
+            
+        }
+
+        .pagination a {
+            margin: 0 5px;
+            padding: 5px 10px;
+            border: 1px solid #000;
+            text-decoration: none;
+            color: #000;
+            display: inline-block;
+        }
+
+        .pagination a.active {
+            background-color: #000;
+            color: #fff;
+        }
+
+        #gasChart {
+            display: flex;
+            justify-content: center;
+            margin: 50px auto;
+            height: 200px;
+            width: 80%; 
+        }
+
+    </style>
+
+    <link rel="stylesheet" href="../static/bootstrap.css">
+    <link rel="stylesheet" href="../static/bootstrap-icons.css">
+
+    <script src="../static/chart.min.js"></script>
+</head>
+
+
+<body class="text-center">
+    <div class="container">
+        <h1>Sensor Data</h1>
+
+        <!-- Form for date filtering -->
+        <form action="" method = 'post' class="form">
+            <label for="start_date">Start Date:</label>
+            <input class="form-control" type="date" id="start_date" name="start_date">
+
+            <label for="end_date">End Date:</label>
+            <input class="form-control" type="date" id="end_date" name="end_date">
+            <br>
+            <button class="btn btn-primary btn-large btn-block form-control"type="submit">Filter Data</button>
+            <br><br>
+        </form>
+
+        <!-- Display the data in a table -->
+        <table>
+            <thead>
+                <tr>
+                    <th>Temperature</th>
+                    <th>Humidity</th>
+                    <th>PM1.0</th>
+                    <th>PM2.5</th>
+                    <th>PM10</th>
+                    <th>ppm_H2S</th>
+                    <th>ppm_CO</th>
+                    <th>ppm_NH4</th>
+                    <th>ppm_NH3</th>
+                    <th>ppmAlcohol</th>
+                    <th>ppmToluene</th>
+                    <th>ppmAcetone</th>
+                    <th>Date</th>
+                    <th>Time</th>
+                    <th>Prediction</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for item in data %}
+                <tr id="data-row">
+                    <td id="date" class="data-element">{{ item.date }}</td>
+                    <td id="time" class="data-element">{{ item.time }}</td>
+                    <td id="temperature" class="data-element">{{ item.temperature }}</td>
+                    <td id="humidity" class="data-element">{{ item.humidity }}</td>
+                    <td id="PM1" class="data-element">{{ item["PM1.0"] }}</td>
+                    <td id="PM25" class="data-element">{{ item["PM2.5"] }}</td>
+                    <td id="PM10" class="data-element">{{ item.PM10 }}</td>
+                    <td id="H2S" class="data-element">{{ item.ppm_H2S }}</td>
+                    <td id="CO" class="data-element">{{ item.ppm_CO }}</td>
+                    <td id="NH4" class="data-element">{{ item.ppm_NH4 }}</td>
+                    <td id="NH3" class="data-element">{{ item.ppm_NH3 }}</td>
+                    <td id="Alcohol" class="data-element">{{ item.ppmAlcohol }}</td>
+                    <td id="Toluene" class="data-element">{{ item.ppmToluene }}</td>
+                    <td id="Acetone" class="data-element">{{ item.ppmAcetone }}</td>
+                    <td id="Prediction" class="data-element">{{ item.Prediction }}</td>
+                  
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+
+        <!-- Pagination Links -->
+        <div class="pagination">
+            {% for p in range(1, total_pages + 1) %}
+            <a href="/getsensor-data?page={{ p }}" class="{% if p == page %}active{% endif %}">{{ p }}</a>
+            {% endfor %}
+        </div>
+    </div>
+
+
+    <script src="static/chart.min.js"></script>
+
+    <!-- Chart Canvas -->
+    <canvas id="gasChart"></canvas>
+
+
+    <!-- Chart.js Script -->
+    <script>
+        
+        // Extract table data for Chart.js
+        const table = document.getElementById('data-table');
+        const rows = document.getElementsByTagName('tr');
+        const element = document.getElementById('mymy');
+        //const dataRows = rows.getElementsByClassName("data-element");
+        //const timestamps = [];
+        const dateData = [];
+        const timeData = [];
+        const temprature = [];
+        const humidity = [];
+        const h2s = [];
+        const pm01 = [];
+        const pm25 = [];
+        const pm10 = [];
+        const co = [];
+        const nh4 = [];
+        const nh3 = [];
+        const alcohol = [];
+        const toluene = [];
+        const acetone = [];
+        const prediction = [];
+        
+
+        for (let i = 0; i < rows.length; i++) {
+            const cells = rows[i].getElementsByTagName('td');
+            if (cells.length > 0) {
+                
+                console.log('Row data:', cells[0].innerText, cells[1].innerText);
+
+                dateData.push(cells[1].innerText);
+                timeData.push(parseFloat(cells[1].innerText)); 
+                temprature.push(parseFloat(cells[2].innerText));
+                humidity.push(parseFloat(cells[3].innerText));
+                pm01.push(parseFloat(cells[4].innerText));
+                pm25.push(parseFloat(cells[5].innerText));
+                pm10.push(parseFloat(cells[6].innerText));
+                h2s.push(parseFloat(cells[7].innerText));
+                co.push(parseFloat(cells[8].innerText));
+                nh4.push(parseFloat(cells[9].innerText));
+                nh3.push(parseFloat(cells[10].innerText));
+                alcohol.push(parseFloat(cells[11].innerText));
+                toluene.push(parseFloat(cells[12].innerText));
+                acetone.push(parseFloat(cells[13].innerText));
+                prediction.push(parseFloat(cells[14].innerText));
+            }
+        }
+        
+        // Render Chart.js
+        const ctx = document.getElementById('gasChart').getContext('2d');
+        new Chart(ctx, {
+            type: 'line',
+            data: {
+                labels: dateData,
+                datasets: [
+                    {
+                        label: 'PM1.0',
+                        data: pm01,
+                        borderColor: "blue",
+                        fill: false,
+                    },
+                    {
+                        label: 'PM2.5',
+                        data: pm25,
+                        borderColor: 'green',
+                        fill: false,
+                    },
+                    {
+                        label: 'PM10',
+                        data: pm10,
+                        borderColor: 'red',
+                        fill: false,
+                    },
+                    {
+                        label: 'H2S',
+                        data: h2s,
+                        borderColor: 'purple',
+                        fill: false,
+                    },
+                    {
+                        label: 'CO',
+                        data: co,
+                        borderColor: 'orange',
+                        fill: false,
+                    },
+                    {
+                        label: 'NH4',
+                        data: nh4,
+                        borderColor: 'cyan',
+                        fill: false,
+                    },
+                    {
+                        label: 'NH3',
+                        data: nh3,
+                        borderColor: 'brown',
+                        fill: false,
+                    },
+                    {
+                        label: 'Alcohol',
+                        data: alcohol,
+                        borderColor: 'magenta',
+                        fill: false,
+                    },
+                    {
+                        label: 'Toulene',
+                        data: toluene,
+                        borderColor: 'yellow',
+                        fill: false,
+                    },
+                    {
+                        label: 'Acetone',
+                        data: acetone,
+                        borderColor: 'teal',
+                        fill: false,
+                    },
+                ],
+            },
+            options: {
+                responsive: false,
+                maintainAspectRatio: false, // Allow custom height and width
+                scales: {
+                    x: {
+                        type: 'category',
+                        title: {
+                            display: true,
+                            text: 'Time',
+                        },
+                    },
+                    y: {
+                        title: {
+                            display: true,
+                            text: 'Polutants Concentrations',
+                        },
+                    },
+                },
+            },
+        });
+    </script>
+
+</body>
+</html>

@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <link rel="stylesheet" href="../static/bootstrap.css">
+        <link rel="stylesheet" href="../static/bootstrap-icons.css">
+
+        <style>
+            table {
+                width: 100%;
+                border-collapse: collapse;
+                margin: 20px 0;
+            }
+            table, th, td {
+                border: 1px solid black;
+            }
+            th, td {
+                padding: 8px;
+                text-align: left;
+            }
+            .pagination {
+                text-align: center;
+                margin: 20px 0;
+            }
+            .pagination a {
+                margin: 0 5px;
+                padding: 5px 10px;
+                border: 1px solid #000;
+                text-decoration: none;
+                color: #000;
+            }
+            .pagination a.active {
+                background-color: #000;
+                color: #fff;
+            }
+        </style>
+    </head>
+
+    <body class="text-center">
+        <div class="container">
+            <h1>
+                Predict the Air Qulity of the Environment
+            </h1>
+
+            <!-- Main Input for Recevicng Query to our url -->
+
+            ------------------------------<!-- CONTINUE FROM THE TABLE -->
+
+            <!-- Flash Messages Section -->
+            {% with messages = get_flashed_messages(with_categories=True) %}
+                {% if messages %}
+                    <div>
+                        {% for category, message in messages %}
+                        <div class="alert alert-{{ category }}">
+                            <button type="button" class="m1-2 mb-1 close" data-dismiss="alert" aria-label="Close">
+                              <span aria-hidden="true">&times;</span>
+                            </button>
+                            {{ message|safe }}
+                          </div>
+                        {% endfor %}
+                    </div>
+                {% endif %}
+            {% endwith %}
+
+             <form action="{{ url_for('predict')}}" method = 'post' class="form">
+              
+                {{ prediction_text }}
+                <input class="form-control" type="text" name="PM25" placeholder="Data for PM2.5" required = "required">
+                <br>
+                <input class="form-control" type="text" name="PM10" placeholder="Data for PM10" required = "required">
+                <br>
+                <input class="form-control" type="text" name="NO" placeholder="Enter Data for NH3" required = "required">
+                <br>
+                <input class="form-control" type="text" name="NO2" placeholder="Enter Data for NH4" required = "required">
+                <br>
+                <input class="form-control" type="text" name="NOx" placeholder="Enter Data for NOx" required = "required">
+                <br>
+                <input class="form-control" type="text" name="NH3" placeholder="Enter Data for NH3" required = "required">
+                <br>
+                <input class="form-control" type="text" name="PM0.1" placeholder="Enter Data for SO2" required = "required">
+                <br>
+                <input class="form-control" type="text" name="CO" placeholder="Enter Data for CO" required = "required">
+                <br>
+                <input class="form-control" type="text" name="ozone" placeholder="Enter Data for Ozone" required = "required">
+                <br>
+                <input class="form-control" type="text" name="benzen" placeholder="Enter Data for Benzen" required = "required">
+                <br>
+                <input class="form-control" type="text" name="toulene" placeholder="Enter Data for Toluene" required = "required">
+                <br>
+                <input class="form-control" type="text" name="temparature" placeholder="Enter Data for Temparature" required = "required">
+                <br>
+                <input class="form-control" type="text" name="humidity" placeholder="Enter Data for Humidity" required = "required">
+                <br>
+                <button type="submit" class="btn btn-primary btn-large btn-block form-control">Predict!</button>
+             </form>
+             <br>
+             <br>
+              
+        </div>
+
+        <!-- jQuery first, then Popper.js, then Bootstrap JS -->
+        <script deffer type="text/javascript" src='../static/jquery-3.7.1.js'></script>
+        <script deffer type="text/javascript" src="../static/bootstrap.bundle.js"></script>
+    </body>
+</html>
