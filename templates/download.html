@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Download data</title>
+    <link rel="stylesheet" href="../static/bootstrap.css">
+
+    <style>
+        body {
+            font-family: 'Arial', sans-serif; 
+            background-color: #f4f6f9;
+            color: #333; 
+        }
+
+        .container {
+            background-color: lightgray; 
+            padding: 20px;
+            border-radius: 10px; 
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); 
+        }
+
+        label {
+            font-weight: bold; 
+            color: #555; 
+        }
+
+        .btn-success {
+            background-color: #28a745; 
+            border-color: #28a745;
+        }
+
+        .btn-success:hover {
+            background-color: #218838; 
+            border-color: #1e7e34;
+        }
+
+        .btn-primary {
+            background-color: #007bff; 
+            border-color: #007bff;
+        }
+
+        .btn-primary:hover {
+            background-color: #0056b3; 
+            border-color: #004085;
+        }
+    </style>
+
+
+</head>
+<body class="text-center">
+
+    <div class="container justify-content-center align-items-center" style="width: 100%; margin-top: 20%;">
+
+        <form method="POST" class="form" action="{{ url_for('download_data')}}">
+            
+            <label for="start_date" > Start Date: </label><br>
+            <input class="form-control" type="date" id="start_date" name="start_date" required pattern="\d{4}-\d{2}-\d{2}"><br>
+
+            <label for="end_date">End Date:</label><br>
+            <input class="form-control" type="date" id="end_date" name="end_date" required pattern="\d{4}-\d{2}-\d{2}">
+            <br>
+
+            <button class="btn btn-success btn-large btn-block form-control"type="submit">Download</button>
+            <br>
+                
+        </form>
+        <form action="GET">
+            <button formaction="{{ url_for('nav')}}" class="btn btn-primary form-control submit" type="submit">Nav. Page</button><br><br>
+        </form>
+        
+
+    </div>
+    
+</body>
+</html>

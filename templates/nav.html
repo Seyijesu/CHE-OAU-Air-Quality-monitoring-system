@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <link rel="stylesheet" href="../static/bootstrap.css">
+    <link rel="stylesheet" href="../static/background.css">
+</head>
+<body class="text-center">
+    <div class="container justify-content-center align-items-center" style="width: 100%; margin-top: 20%;">
+        <h3 style="margin-bottom: 15px;">Welcome to Air-Quality Monitoring Project Using Ai and IoT</h3>
+        <form method="GET" class="form">
+            <button type="submit" class="form-control btn btn-primary mb-2" formaction="{{ url_for('home')}}" style="margin-top: 5px;"> Home </button>
+
+            <button type="submit" class="btn btn-success w-100 mb-2" formaction="{{ url_for('inputdata')}}">Input Data</button>
+
+            <button class="btn btn-primary w-100 mb-2" type="submit" formaction="{{ url_for('get_sensor_data')}}">Table Data</button>
+
+            <button class="btn btn-success w-100 mb-2" type="submit" formaction="{{ url_for('download_data')}}">Download Data</button>
+        </form>
+    </div>
+</body>
+</html>

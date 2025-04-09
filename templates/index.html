@@ -1,104 +1,107 @@
 <!DOCTYPE html>
-<html>
-    <head>
-        <link rel="stylesheet" href="../static/bootstrap.css">
-        <link rel="stylesheet" href="../static/bootstrap-icons.css">
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Realtime Air Quality Monitoring</title>
+  <!-- Bootstrap CSS -->
+  <link rel="stylesheet" href="../static/bootstrap.css">
+  <style>
+    .container {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      min-height: 100vh; /* Ensures the container takes up the full viewport height */
+      text-align: center;
+    }
+    .centered {
+      margin-bottom: 40px; /* Adds spacing between the top paragraph and the horizontal section */
+    }
+    .horizontal-section {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      width: 100%;
+      max-width: 1200px; /* Limits the width for better readability */
+    }
+    .horizontal-section .left, .horizontal-section .right {
+      width: 45%; /* Adjusts the width of the left and right paragraphs */
+    }
+    .box {
+      padding: 20px;
+      border-radius: 10px;
+      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+      transition: transform 0.3s ease-in-out;
+    }
+    .box:hover {
+      transform: scale(1.02); /* Slight hover effect */
+    }
+    .box-1 {
+      background-color: #e0f7fa; /* Light Cyan */
+    }
+    .box-2 {
+      background-color: #fff3e0; /* Light Orange */
+    }
+    .box-3 {
+      background-color: #e8f5e9; /* Light Green */
+    }
+    .btn-custom {
+      background-color: #b3e5fc; /* Harmonizing Cyan */
+      border: none;
+      color: #000;
+      padding: 10px 20px;
+      border-radius: 5px;
+      font-size: 16px;
+      transition: transform 0.3s ease-in-out;
+    }
+    .btn-custom:hover {
+      background-color: #81d4fa; /* Slightly darker Cyan on hover */
+      transform: scale(1.05);
+    }
+  </style>
+</head>
+<body>
 
-        <style>
-            table {
-                width: 100%;
-                border-collapse: collapse;
-                margin: 20px 0;
-            }
-            table, th, td {
-                border: 1px solid black;
-            }
-            th, td {
-                padding: 8px;
-                text-align: left;
-            }
-            .pagination {
-                text-align: center;
-                margin: 20px 0;
-            }
-            .pagination a {
-                margin: 0 5px;
-                padding: 5px 10px;
-                border: 1px solid #000;
-                text-decoration: none;
-                color: #000;
-            }
-            .pagination a.active {
-                background-color: #000;
-                color: #fff;
-            }
-        </style>
-    </head>
+  <div class="container">
+    <!-- Top Centered Paragraph -->
+    <div class="centered">
+      <div class="box box-1">
+        <p>
+          Realtime Air Quality Monitoring using AI and IoT is a project aimed at addressing the challenges the traditional air quality monitoring systems. These conventional systems are often expensive, bulky, and lack the flexibility needed for real-time data collection. By leveraging Artificial Intelligence (AI) and Internet of Things (IoT), this project provides an affordable, portable, and efficient solution for monitoring air quality. The system utilizes combination of many sensors as an entity, that can be deployed in various locations, enabling continuous data collection and analysis. This not only reduces costs but also ensures that critical air quality information is readily available, this will empowering users to make informed decisions to combat environmental issues.
+        </p>
+      </div>
+    </div>
 
-    <body class="text-center">
-        <div class="container">
-            <h1>
-                Predict the Air Qulity of the Environment
-            </h1>
-
-            <!-- Main Input for Recevicng Query to our url -->
-
-            ------------------------------<!-- CONTINUE FROM THE TABLE -->
-
-            <!-- Flash Messages Section -->
-            {% with messages = get_flashed_messages(with_categories=True) %}
-                {% if messages %}
-                    <div>
-                        {% for category, message in messages %}
-                        <div class="alert alert-{{ category }}">
-                            <button type="button" class="m1-2 mb-1 close" data-dismiss="alert" aria-label="Close">
-                              <span aria-hidden="true">&times;</span>
-                            </button>
-                            {{ message|safe }}
-                          </div>
-                        {% endfor %}
-                    </div>
-                {% endif %}
-            {% endwith %}
-
-             <form action="{{ url_for('predict')}}" method = 'post' class="form">
-              
-                {{ prediction_text }}
-                <input class="form-control" type="text" name="PM25" placeholder="Data for PM2.5" required = "required">
-                <br>
-                <input class="form-control" type="text" name="PM10" placeholder="Data for PM10" required = "required">
-                <br>
-                <input class="form-control" type="text" name="NO" placeholder="Enter Data for NH3" required = "required">
-                <br>
-                <input class="form-control" type="text" name="NO2" placeholder="Enter Data for NH4" required = "required">
-                <br>
-                <input class="form-control" type="text" name="NOx" placeholder="Enter Data for NOx" required = "required">
-                <br>
-                <input class="form-control" type="text" name="NH3" placeholder="Enter Data for NH3" required = "required">
-                <br>
-                <input class="form-control" type="text" name="PM0.1" placeholder="Enter Data for SO2" required = "required">
-                <br>
-                <input class="form-control" type="text" name="CO" placeholder="Enter Data for CO" required = "required">
-                <br>
-                <input class="form-control" type="text" name="ozone" placeholder="Enter Data for Ozone" required = "required">
-                <br>
-                <input class="form-control" type="text" name="benzen" placeholder="Enter Data for Benzen" required = "required">
-                <br>
-                <input class="form-control" type="text" name="toulene" placeholder="Enter Data for Toluene" required = "required">
-                <br>
-                <input class="form-control" type="text" name="temparature" placeholder="Enter Data for Temparature" required = "required">
-                <br>
-                <input class="form-control" type="text" name="humidity" placeholder="Enter Data for Humidity" required = "required">
-                <br>
-                <button type="submit" class="btn btn-primary btn-large btn-block form-control">Predict!</button>
-             </form>
-             <br>
-             <br>
-              
+    <!-- Horizontal Section with Left and Right Paragraphs -->
+    <div class="horizontal-section">
+      <!-- Left Paragraph -->
+      <div class="left">
+        <div class="box box-2">
+          <p>
+            The project is being developed by Olaleke Oluwasyi Hezekiah, a final year student of Obafemi Awolowo University, Ile-Ife, under the guidance and supervision of Prof. A.S Osunleke. The goal is to create a user-friendly platform where air quality data is accessible in real-time, promoting awareness and proactive measures to mitigate pollution. By integrating AI algorithms, the system can predict trends and identify potential pollution hotspots, providing actionable insights for academia, environmentalists, and the general public. The mobility of the IoT-based sensors allows for deployment in remote or underserved areas, ensuring comprehensive coverage and fostering equitable access to environmental data.
+          </p>
         </div>
+      </div>
 
-        <!-- jQuery first, then Popper.js, then Bootstrap JS -->
-        <script deffer type="text/javascript" src='../static/jquery-3.7.1.js'></script>
-        <script deffer type="text/javascript" src="../static/bootstrap.bundle.js"></script>
-    </body>
+      <!-- Right Paragraph -->
+      <div class="right">
+        <div class="box box-3">
+          <p>
+            In addition to its main functionality, this project emphasizes sustainability and scalability. It highlights the importance of community involvement in environmental monitoring and encourages collaboration between governments, organizations, and individuals. Future enhancements could include mobile applications for real-time alerts, integration with smart city infrastructure, and partnerships with environmental agencies to amplify its impact. Suggestions for the webpage could include sections like "Our Mission," which outlines the long-term goals of the project, "Team," to introduce key contributors, and "Get Involved," to encourage participation from volunteers or sponsors. Adding testimonials or case studies showcasing the system's effectiveness in pilot programs could also build credibility and attract interest.
+            Contact us at <a href="oholaleke@student.oauife.edu.ng">oholaleke@student.oauife.edu.ng</a>  also <a href="as"></a>
+          </p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Button -->
+    <div style="margin-top: 40px;">
+      <a href="{{ url_for('nav')}}" class="btn btn-custom">Go to Nav. Page</a>
+    </div>
+  </div>
+
+  <!-- Bootstrap JS (Optional if you need interactive components) -->
+  <script src="../static/bootstrap.bundle.js"></script>
+</body>
 </html>

@@ -15,19 +15,23 @@
         body {
             height: 100vh;
             color: blue;
-        }
-        
-        th {
-            background-color: #f2f2f2;
+            background-color: lightgray;
+            font-family: Arial, Helvetica, sans-serif;
+            font-weight: bold;
         }
 
         table {
-            width: 100%;
-            border-collapse: collapse;
-            margin: 20px 0;
+            font-weight: bold;
+        }
+        
+        th {
+            /* background-color: #f2f2f2; */
+            background-color: lightblue;
         }
 
-        table, th, td {
+        
+
+        table, th {
             border: 1px solid black;
         }
 
@@ -64,6 +68,10 @@
             width: 80%; 
         }
 
+        form button{
+            margin-bottom: 15px;
+        }
+
     </style>
 
     <link rel="stylesheet" href="../static/bootstrap.css">
@@ -75,15 +83,15 @@
 
 <body class="text-center">
     <div class="container">
-        <h1>Sensor Data</h1>
+        <h1 style="margin-top: 20px; margin-bottom: 20px;">Real-Time Sensor's Data</h1>
 
         <!-- Form for date filtering -->
-        <form action="" method = 'post' class="form">
+        <form action="/getsensor-data" method = 'post' class="form">
             <label for="start_date">Start Date:</label>
-            <input class="form-control" type="date" id="start_date" name="start_date">
+            <input class="form-control" type="date" id="start_date" name="start_date" required pattern="\d{4}-\d{2}-\d{2}">
 
             <label for="end_date">End Date:</label>
-            <input class="form-control" type="date" id="end_date" name="end_date">
+            <input class="form-control" type="date" id="end_date" name="end_date" required pattern="\d{4}-\d{2}-\d{2}">
             <br>
             <button class="btn btn-primary btn-large btn-block form-control"type="submit">Filter Data</button>
             <br><br>
@@ -93,6 +101,8 @@
         <table>
             <thead>
                 <tr>
+                    <th>Date</th>
+                    <th>Time</th>
                     <th>Temperature</th>
                     <th>Humidity</th>
                     <th>PM1.0</th>
@@ -105,8 +115,6 @@
                     <th>ppmAlcohol</th>
                     <th>ppmToluene</th>
                     <th>ppmAcetone</th>
-                    <th>Date</th>
-                    <th>Time</th>
                     <th>Prediction</th>
                 </tr>
             </thead>
@@ -147,6 +155,21 @@
 
     <!-- Chart Canvas -->
     <canvas id="gasChart"></canvas>
+
+    <div class="container">
+
+        <form class="form">
+            
+            <button type="submit" class="btn btn-primary w-100" formaction="{{ url_for('home')}}">Home</button>
+        
+            <button type="submit" class="btn btn-success w-100" formaction="{{ url_for('inputdata')}}">Input Data</button>
+
+            <button type="submit" class="btn btn-primary w-100" formaction="{{ url_for('nav')}}">Nav. Page</button>
+                
+        </form>
+
+    </div>
+    
 
 
     <!-- Chart.js Script -->

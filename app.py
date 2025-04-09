@@ -1,10 +1,12 @@
 import numpy as np
-from flask import Flask, request, render_template, jsonify, flash
+from flask import Flask, request, render_template, jsonify, flash, send_file
 import requests
 import pickle
 from datetime import datetime
 from flask_pymongo import PyMongo
 import pytz
+import io
+import pandas as pd
 
 app = Flask(__name__)
 app.config["SECRET_KEY"] = 'your_secret_key'
@@ -21,11 +23,26 @@ sensor_data_storage = []
 def home():
     return render_template("index.html")
 
+@app.route("/nav")
+def nav():
+    return render_template("nav.html")
+
+@app.route("/inputdata", methods= ["GET", "POST"])
+def inputdata():
+    return render_template("inputdata.html")
+
+# @app.route("/download")
+# def download():
+#     return render_template("download.html")
+
 @app.route("/predict", methods =["POST", "GET"])
 def predict():
     """
     For rendering request on HTML
     """
+    if request.method == "GET":
+        return render_template("inputdata.html")
+    
     int_features = [int(x) for x in request.form.values()]
     final_features = [np.array(int_features)]
     prediction = model.predict(final_features)
@@ -51,7 +68,7 @@ def predict():
 
       # Flash an info message
 
-    return render_template("index.html")
+    return render_template("inputdata.html")
 
 @app.route("/predict_api", methods=["POST"])
 def predict_api():
@@ -68,8 +85,9 @@ def predict_api():
 @app.route('/logsensor', methods=['POST'])
 def log_sensor_data():
     data = request.get_json()
-
-    #print("The raw data is: ", data)
+    
+    #To print the data recived at the console
+    print("The raw data is: ", data)
 
     if not data:
         return jsonify({"error": "No data provided"}), 400
@@ -195,7 +213,7 @@ def get_sensor_data():
     page = int(request.args.get('page', 1))  # get Current page number from url (default is 1)
     #(Pagination parameters)
 
-    per_page = 15  # Items per page
+    per_page = 60  # Items per page
     
     skip = (page - 1) * per_page  # Calculate the number of items to skip
 
@@ -214,8 +232,8 @@ def get_sensor_data():
 
                 # MongoDB query to filter based on date range
                 query = {
-                    "timestamp": {
-                        "$gte": start_date_obj,
+                    "date": {
+                        "$eq":start_date_obj,
                         "$lte": end_date_obj
                     }
                 }
@@ -224,24 +242,18 @@ def get_sensor_data():
 
         # Fetch data from MongoDB
         data = list(mongo.db.airConcentartion.find(query).skip(skip).limit(per_page))
-        total_count = mongo.db.airConcentartion.find(query).count_documents({})  # Total number of documents
+
+        total_count = mongo.db.airConcentartion.count_documents(query)  # Total number of documents
+        
+        total_pages = (total_count + per_page - 1) // per_page
     else:
         # Default to fetching all data for GET method
         # Query MongoDB
         data = list(mongo.db.airConcentartion.find().skip(skip).limit(per_page))  # Fetch paginated data
+        
         total_count = mongo.db.airConcentartion.count_documents({})  # Total number of documents
         total_pages = (total_count + per_page - 1) // per_page  # Calculate total pages
-        gases = {
-            
-        }
-        #print
-        # return render_template(
-        #     'index.html',
-        #     data=data,
-        #     page=page,
-        #     total_pages=total_pages
-        # )
-
+        
     # Pass data to HTML template
     return render_template("datatable.html", 
     data=data, page = page, total_pages=total_pages)
@@ -266,5 +278,44 @@ def date_time(location):
     return formatted_date, formatted_time
 
 
+@app.route('/download', methods=['GET', "POST"])
+def download_data():
+
+    if request.method == "GET":
+        return render_template("download.html")
+    else:
+        if (request.form.get("start_date") and request.form.get("end_date")):
+            #print("*************** I am working")
+            start_date = datetime.strptime(request.form.get("start_date"), "%Y-%m-%d")
+            end_date = datetime.strptime(request.form.get("end_date"), "%Y-%m-%d")
+            query = {
+                    "date": {
+                        "$eq":start_date,
+                        "$lte": end_date
+                    }
+                }
+            # Query entire dataset
+            data = list(mongo.db.airConcentartion.find(query))
+        else:
+            data = list(mongo.db.airConcentartion.find())
+
+        # Convert to DataFrame for easier handling
+        df = pd.DataFrame(data)
+
+        # Convert DataFrame to CSV in memory
+        output = io.StringIO()
+        df.to_csv(output, index=False)
+        output.seek(0)
+
+        # Return as a downloadable file
+        return send_file(
+            io.BytesIO(output.getvalue().encode()),
+            mimetype='text/csv',
+            as_attachment=True,
+            download_name='data.csv' 
+        )
+
+
+
 if __name__ == "__main__":
-    app.run(host="localhost", port=5000, debug = True)
+    app.run(host="192.168.43.183", port=5000, debug = True)
